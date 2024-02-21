@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:himalia/utils/constants.dart';
 import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
 import '../../utils/widgets.dart';
-import 'auth_screen.dart';
 
 class AccountVerification extends StatefulWidget {
   const AccountVerification({Key? key}) : super(key: key);
@@ -22,30 +20,6 @@ class _AccountVerificationState extends State<AccountVerification> {
   final TextEditingController emailController = TextEditingController();
   String? typedOtp;
   bool isLoading = false;
-
-  verifyAccount() async {
-    var request = http.MultipartRequest(
-        'POST', Uri.parse('$accountsBaseUrl/verify-otp-token/'));
-    request.fields
-        .addAll({'email': emailController.text, 'otp_token': typedOtp!});
-
-    http.StreamedResponse response = await request.send();
-
-    if (response.statusCode == 200) {
-      print(await response.stream.bytesToString());
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const AuthenticationScreen()),
-          (Route<dynamic> route) => false);
-      setState(() {
-        isLoading = false;
-      });
-    } else {
-      print(response.reasonPhrase);
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +111,7 @@ class _AccountVerificationState extends State<AccountVerification> {
                                 _fieldFive.text +
                                 _fieldSix.text;
                           });
-                          verifyAccount();
+                          // Removed the call to verifyAccount()
                         },
                         buttonLabel: 'Verify',
                         buttonColor: kPrimaryColor,
@@ -148,7 +122,8 @@ class _AccountVerificationState extends State<AccountVerification> {
                     width: 30,
                     child: CircularProgressIndicator(
                       color: kPrimaryColor,
-                    )),
+                    ),
+                  ),
 
             const SizedBox(
               height: 30,

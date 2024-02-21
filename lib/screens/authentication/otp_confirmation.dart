@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:himalia/screens/authentication/reset_password.dart';
 import 'package:himalia/utils/constants.dart';
 import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
 import '../../utils/widgets.dart';
 
 class OtpResetConfirmation extends StatefulWidget {
@@ -21,31 +20,6 @@ class _OtpResetConfirmationState extends State<OtpResetConfirmation> {
   final TextEditingController _fieldSix = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   String? typedOtp;
-  bool isLoading = false;
-
-  verifyEmailToken() async {
-    var request = http.MultipartRequest(
-        'POST', Uri.parse('$accountsBaseUrl/verify-otp-token/'));
-    request.fields
-        .addAll({'email': emailController.text, 'otp_token': typedOtp!});
-
-    http.StreamedResponse response = await request.send();
-
-    if (response.statusCode == 200) {
-      print(await response.stream.bytesToString());
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const ResetPassword()),
-          (Route<dynamic> route) => false);
-      setState(() {
-        isLoading = false;
-      });
-    } else {
-      print(response.reasonPhrase);
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

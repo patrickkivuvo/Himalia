@@ -5,15 +5,9 @@ import 'package:sizer/sizer.dart';
 
 import '../../utils/widgets.dart';
 
-class ResetPasswordSuccessPage extends StatefulWidget {
+class ResetPasswordSuccessPage extends StatelessWidget {
   const ResetPasswordSuccessPage({Key? key}) : super(key: key);
 
-  @override
-  State<ResetPasswordSuccessPage> createState() =>
-      _ResetPasswordSuccessPageState();
-}
-
-class _ResetPasswordSuccessPageState extends State<ResetPasswordSuccessPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

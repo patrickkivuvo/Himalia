@@ -1,11 +1,6 @@
-// ignore_for_file: unused_field
-
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:himalia/screens/authentication/reset_password_success_page.dart';
+import 'package:himalia/screens/authentication/auth_screen.dart';
 import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
 import '../../utils/constants.dart';
 import '../../utils/widgets.dart';
 
@@ -20,77 +15,33 @@ class _ResetPasswordState extends State<ResetPassword> {
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmNewPasswordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  final bool _rememberUser = false;
-  String _displayText = '';
   double _strength = 0;
   RegExp numReg = RegExp(r".*[0-9].*");
   RegExp letterReg = RegExp(r".*[A-Za-z].*");
   bool isLoading = false;
 
-  resetPassword() async {
-    var request = http.MultipartRequest(
-        'POST', Uri.parse('$accountsBaseUrl/set-password/'));
-    request.fields.addAll({
-      'email': emailController.text,
-      'password': newPasswordController.text,
-      'password2': confirmNewPasswordController.text
-    });
-
-    http.StreamedResponse response = await request.send();
-
-    if (response.statusCode == 200) {
-      print(await response.stream.bytesToString());
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-              builder: (context) => const ResetPasswordSuccessPage()),
-          (Route<dynamic> route) => false);
-      setState(() {
-        isLoading = false;
-      });
-    } else {
-      var data = jsonDecode(await response.stream.bytesToString());
-      print(data);
-      if (data.containsKey("email")) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('User with email provided does not exist'),
-          ),
-        );
-      }
-
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
   void _checkPassword(String value) {
     if (newPasswordController.text.isEmpty) {
       setState(() {
         _strength = 0;
-        _displayText = '';
       });
     } else if (newPasswordController.text.length < 6) {
       setState(() {
         _strength = 1 / 4;
-        _displayText = 'Your password is too short';
       });
     } else if (newPasswordController.text.length < 8) {
       setState(() {
         _strength = 2 / 4;
-        _displayText = 'Your password is acceptable but not strong';
       });
     } else {
       if (!letterReg.hasMatch(newPasswordController.text) ||
           !numReg.hasMatch(newPasswordController.text)) {
         setState(() {
           _strength = 3 / 4;
-          _displayText = 'Your password is strong';
         });
       } else {
         setState(() {
           _strength = 1;
-          _displayText = 'Your password is great';
         });
       }
     }
@@ -190,13 +141,6 @@ class _ResetPasswordState extends State<ResetPassword> {
                   minHeight: 15,
                 ),
               ),
-              Text(
-                _displayText,
-                style: TextStyle(
-                    color: kPrimaryColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700),
-              ),
               buildGlobalTextField(
                 nameController: confirmNewPasswordController,
                 title: 'Confirm new password',
@@ -233,10 +177,10 @@ class _ResetPasswordState extends State<ResetPassword> {
                             ),
                           );
                         } else {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          resetPassword();
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (_) =>
+                                      const AuthenticationScreen()));
                         }
                       },
                       buttonLabel: 'Save',

@@ -18,6 +18,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   PasswordResetOptions _resetOptions = PasswordResetOptions.phoneNumber;
   bool phoneSelected = true;
   bool emailSelected = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
